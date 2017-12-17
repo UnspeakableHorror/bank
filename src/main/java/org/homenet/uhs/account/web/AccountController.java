@@ -1,7 +1,8 @@
-package org.homenet.uhs.account;
+package org.homenet.uhs.account.web;
 
-import org.homenet.uhs.AccountService;
+import org.homenet.uhs.account.service.AccountService;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,8 +20,8 @@ public class AccountController {
     }
 
 
-    @GetMapping("account")
-    public String getAccount(){
-        return "";
+    @GetMapping("account/{accountId}")
+    public AccountDTO getAccount(@PathVariable Long accountId){
+        return new AccountDTO(accountService.getAccount(accountId));
     }
 }

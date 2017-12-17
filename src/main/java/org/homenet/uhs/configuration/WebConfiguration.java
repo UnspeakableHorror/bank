@@ -1,0 +1,17 @@
+package org.homenet.uhs.configuration;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
+
+/**
+ * @author uh on 2017/12/16.
+ */
+@Configuration
+public class WebConfiguration {
+
+    @Bean
+    public RestTemplate restTemplate(){
+        return new RestTemplate();
+    }
+}

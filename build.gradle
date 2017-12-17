@@ -17,6 +17,14 @@ apply plugin: 'org.springframework.boot'
 jar {
     baseName = 'bank'
     version =  version
+    manifest {
+        attributes 'Main-Class': 'org.homenet.uhs.Application'
+    }
+}
+
+bootRepackage {
+    mainClass = 'org.homenet.uhs.Application'
+    executable = true
 }
 
 sourceCompatibility = 1.8
