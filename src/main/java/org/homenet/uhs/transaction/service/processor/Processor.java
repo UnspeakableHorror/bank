@@ -1,11 +1,11 @@
 package org.homenet.uhs.transaction.service.processor;
 
 import org.homenet.uhs.account.service.AccountService;
-import org.homenet.uhs.transaction.web.TransactionDTO;
 import org.homenet.uhs.transaction.model.Transaction;
 import org.homenet.uhs.transaction.model.TransactionFactory;
 import org.homenet.uhs.transaction.service.queue.QueueElement;
 import org.homenet.uhs.transaction.service.queue.TransactionQueueingService;
+import org.homenet.uhs.transaction.web.TransactionDTO;
 
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 class Processor implements Runnable{
     private Logger logger = Logger.getLogger(Processor.class.getName());
 
-    private AccountService accountService;
+    private final AccountService accountService;
     private final TransactionQueueingService transactionQueueingService;
 
     Processor(AccountService accountService, TransactionQueueingService transactionQueueingService) {
@@ -40,7 +40,6 @@ class Processor implements Runnable{
                     transactionDTO.getAmount());
 
             accountService.transferFunds(transaction);
-
         });
     }
 }

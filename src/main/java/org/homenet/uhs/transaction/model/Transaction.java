@@ -37,6 +37,9 @@ public abstract class Transaction {
         return amount;
     }
 
+    /**
+     * @return the value of the transaction after tax.
+     */
     public Double getTaxedAmount() {
         return amount - calculateTax();
     }
@@ -56,6 +59,15 @@ public abstract class Transaction {
     @Override
     public int hashCode() {
         return Objects.hash(originAccount, destinationAccount, amount);
+    }
+
+    @Override
+    public String toString() {
+        return "Transaction{" +
+                "originAccount=" + originAccount +
+                ", destinationAccount=" + destinationAccount +
+                ", amount=" + amount +
+                '}';
     }
 
     public boolean isValid() {

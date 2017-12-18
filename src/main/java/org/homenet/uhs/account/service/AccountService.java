@@ -11,4 +11,6 @@ public interface AccountService {
     Account getAccount(Long accountId);
 
     void transferFunds(Transaction transaction);
+
+    void save(Account destination);
 }

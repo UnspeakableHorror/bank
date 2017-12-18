@@ -1,14 +1,13 @@
 package org.homenet.uhs.transaction.web;
 
-import org.homenet.uhs.configuration.Runner;
+import org.homenet.uhs.configuration.Runners;
 import org.homenet.uhs.transaction.service.queue.TransactionQueueingService;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -17,15 +16,13 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("api")
 public class TransactionController {
+    private Logger logger = Logger.getLogger(TransactionController.class.getName());
 
-    private final Runner runner;
-
+    private final Runners runners;
     private final TransactionQueueingService transactionQueueingService;
 
-    private final ExecutorService service = Executors.newSingleThreadExecutor();
-
-    public TransactionController(Runner runner, TransactionQueueingService transactionQueueingService) {
-        this.runner = runner;
+    public TransactionController(Runners runners, TransactionQueueingService transactionQueueingService) {
+        this.runners = runners;
         this.transactionQueueingService = transactionQueueingService;
     }
 
@@ -37,7 +34,20 @@ public class TransactionController {
                     .map(DefaultMessageSourceResolvable::getDefaultMessage)
                     .collect(Collectors.joining(", "));
 
+            //return ResponseEntity.ok().build();
             return ResponseEntity.badRequest().body(errors);
+        }
+
+        if(transactionDTO.getOriginAccount().equals(transactionDTO.getDestinationAccount())){
+            logger.severe("Invalid origin and destination. Cannot transfer to itself.");
+            //return ResponseEntity.ok().build();
+            return ResponseEntity.badRequest().body("Invalid origin and destination. Cannot transfer to itself.");
+        }
+
+        if(transactionDTO.getAmount() <= 0){
+            logger.severe("The amount must be a positive number.");
+            //return ResponseEntity.ok().build();
+            return ResponseEntity.badRequest().body("The amount must be a positive number.");
         }
 
         boolean success = transactionQueueingService.post(transactionDTO);
@@ -50,24 +60,15 @@ public class TransactionController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("hello")
-    public String hello(){
-        return "hello";
-    }
-
     @GetMapping("start")
     public String start(){
-        //runner.run();
-
-        service.submit(runner::run);
-
+        runners.start();
         return "started";
     }
 
     @GetMapping("stop")
     public String stop(){
-        runner.stop();
-
+        runners.stop();
         return "stop";
     }
 

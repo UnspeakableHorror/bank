@@ -17,7 +17,7 @@ import java.util.concurrent.Executors;
  */
 @Order(10)
 @Configuration
-public class QueueProcessorConfiguration {
+public class TransactionQueueProcessorConfiguration {
 
     @Autowired
     private AccountService accountService;
