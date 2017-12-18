@@ -29,7 +29,25 @@ public class DifferentBankNationalTransactionTest {
 
 		DifferentBankNationalTransaction transaction = new DifferentBankNationalTransaction(origin, destination, amount);
 
-		assertEquals(transaction.getPreTaxAmount(), amount);
-		assertEquals(transaction.getAfterTaxAmount(), new Double(amount - taxed));
+		assertEquals(amount, transaction.getPreTaxAmount());
+		assertEquals(new Double(amount - taxed), transaction.getAfterTaxAmount());
+	}
+
+	@Test
+	public void testDifferentBankNationalTransaction(){
+		Account origin = new Account(1L, "San", ARGENTINA, 200.0);
+		Account destination = new Account(2L, "Fran", ARGENTINA, 0.0);
+
+		final Double amount = 100.0;
+		final Transaction transaction = TransactionFactory.getTransaction(origin, destination, amount);
+
+		origin.addTransaction(transaction);
+		destination.addTransaction(transaction);
+
+		final Double expectedOriginAmount = amount  - amount * DifferentBankNationalTransaction.TAX_PERCENTAGE ;
+
+		assertEquals(expectedOriginAmount, origin.getBalance());
+		assertEquals(amount, destination.getBalance());
+
 	}
 }

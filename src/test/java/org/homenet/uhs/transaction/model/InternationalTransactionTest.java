@@ -1,6 +1,7 @@
 package org.homenet.uhs.transaction.model;
 
 import static org.homenet.uhs.constants.Countries.ARGENTINA;
+import static org.homenet.uhs.constants.Countries.USA;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -29,7 +30,25 @@ public class InternationalTransactionTest {
 
 		InternationalTransaction transaction = new InternationalTransaction(origin, destination, amount);
 
-		assertEquals(transaction.getPreTaxAmount(), amount);
-		assertEquals(transaction.getAfterTaxAmount(), new Double(amount - taxed));
+		assertEquals(amount, transaction.getPreTaxAmount());
+		assertEquals(new Double(amount - taxed), transaction.getAfterTaxAmount());
+	}
+
+	@Test
+	public void testInternationalTransaction(){
+		Account origin = new Account(1L, "San", ARGENTINA, 200.0);
+		Account destination = new Account(2L, "San", USA, 0.0);
+
+		final Double amount = 100.0;
+		final Transaction transaction = TransactionFactory.getTransaction(origin, destination, amount);
+
+		origin.addTransaction(transaction);
+		destination.addTransaction(transaction);
+
+		final Double expectedOriginAmount = amount  - amount * InternationalTransaction.TAX_PERCENTAGE ;
+
+		assertEquals(expectedOriginAmount, origin.getBalance());
+		assertEquals(amount, destination.getBalance());
+
 	}
 }

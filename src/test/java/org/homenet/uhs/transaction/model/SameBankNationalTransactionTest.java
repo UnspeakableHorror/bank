@@ -28,7 +28,22 @@ public class SameBankNationalTransactionTest {
 
 		SameBankNationalTransaction transaction = new SameBankNationalTransaction(origin, destination, amount);
 
-		assertEquals(transaction.getPreTaxAmount(), amount);
-		assertEquals(transaction.getAfterTaxAmount(), amount);
+		assertEquals(amount, transaction.getPreTaxAmount());
+		assertEquals(amount, transaction.getAfterTaxAmount());
+	}
+
+	@Test
+	public void testSameBankTransaction(){
+		Account origin = new Account(1L, "San", ARGENTINA, 200.0);
+		Account destination = new Account(2L, "San", ARGENTINA, 0.0);
+
+		final Double amount = 100.0;
+		final Transaction transaction = TransactionFactory.getTransaction(origin, destination, amount);
+
+		origin.addTransaction(transaction);
+		destination.addTransaction(transaction);
+
+		assertEquals(amount, origin.getBalance());
+		assertEquals(amount, destination.getBalance());
 	}
 }

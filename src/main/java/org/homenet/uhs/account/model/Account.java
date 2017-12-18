@@ -37,7 +37,7 @@ public class Account {
         return country;
     }
 
-    public double getBalance() {
+    public Double getBalance() {
         return balance;
     }
 
@@ -52,18 +52,33 @@ public class Account {
         }
 
         if(this.getId() == destinationId(transaction)){
-            this.addFunds(transaction.getAfterTaxAmount());
+            // The receiver gets the full amount.
+            this.addFunds(transaction.getPreTaxAmount());
         }
 
         if(this.getId() == originId(transaction)){
-            this.removeFunds(transaction.getAfterTaxAmount());
+            // Remove the full amount.
+            this.removeFunds(transaction.getPreTaxAmount());
+            // Remove the tax
+            // It's not specified but the taxed amount should be sent somewhere,
+            // most likely at service level with a special account or
+            // something along those lines. Plus it should be another transaction
+            // since it should be saved twice as different transactions,
+            // one for the extracted amount
+            // and another for the taxed amount.
+            // Perhaps all this logic should be extracted as well, just handle
+            // adding the transaction and move the addition and removal of funds
+            // at service level.
+            this.removeFunds(transaction.getAfterTaxAmount() - transaction.getPreTaxAmount());
         }
 
         this.transactions.add(transaction);
     }
 
     private void removeFunds(Double funds) throws InsufficientFundsException {
-        if(this.balance - funds < 0){
+        Double value = Math.abs(funds);
+
+        if(this.balance - value < 0){
             throw new InsufficientFundsException(
                     "Not enough funds in account: "
                             + this.getId()
@@ -73,7 +88,7 @@ public class Account {
                             + funds);
         }
 
-        this.balance -= funds;
+        this.balance -= value;
     }
 
     private void addFunds(Double funds) {

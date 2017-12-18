@@ -34,19 +34,17 @@ public class TransactionController {
                     .map(DefaultMessageSourceResolvable::getDefaultMessage)
                     .collect(Collectors.joining(", "));
 
-            //return ResponseEntity.ok().build();
             return ResponseEntity.badRequest().body(errors);
         }
 
         if(transactionDTO.getOriginAccount().equals(transactionDTO.getDestinationAccount())){
             logger.severe("Invalid origin and destination. Cannot transfer to itself.");
-            //return ResponseEntity.ok().build();
             return ResponseEntity.badRequest().body("Invalid origin and destination. Cannot transfer to itself.");
         }
 
         if(transactionDTO.getAmount() <= 0){
             logger.severe("The amount must be a positive number.");
-            //return ResponseEntity.ok().build();
+
             return ResponseEntity.badRequest().body("The amount must be a positive number.");
         }
 

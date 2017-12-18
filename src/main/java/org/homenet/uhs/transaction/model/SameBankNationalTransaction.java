@@ -7,12 +7,16 @@ import org.homenet.uhs.account.model.Account;
  */
 public class SameBankNationalTransaction extends Transaction {
 
+    // keeping this here since the only allowed properties are origin, destination and amount.
+    // this should be a field configured with the factory.
+    public static final double TAX_PERCENTAGE = 0.0;
+
     public SameBankNationalTransaction(Account originAccount, Account destinationAccount, Double amount) {
         super(originAccount, destinationAccount, amount);
     }
 
     @Override
     public Double calculateTax() {
-        return 0.0;
+        return TAX_PERCENTAGE;
     }
 }
