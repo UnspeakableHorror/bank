@@ -40,7 +40,7 @@ final class TransactionStatus {
                 .append(" Amount: ")
                 .append(transaction.getPreTaxAmount())
                 .append(" Taxed: ")
-                .append(transaction.getPreTaxAmount() - transaction.getTaxedAmount())
+                .append(transaction.getPreTaxAmount() - transaction.getAfterTaxAmount())
                 .append(" - Status: ")
                 .append(transactionState.name());
 

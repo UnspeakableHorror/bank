@@ -7,7 +7,7 @@ import org.homenet.uhs.account.model.Account;
  */
 public class DifferentBankNationalTransaction extends Transaction {
 
-    private static final Double TAX_PERCENTAGE = 0.01;
+    public static final Double TAX_PERCENTAGE = 0.01;
 
     public DifferentBankNationalTransaction(Account originAccount, Account destinationAccount, Double amount) {
         super(originAccount, destinationAccount, amount);

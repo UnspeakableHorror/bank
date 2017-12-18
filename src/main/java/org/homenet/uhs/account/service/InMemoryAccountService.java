@@ -44,7 +44,7 @@ public class InMemoryAccountService implements AccountService {
                     + ", amount: "
                     + transaction.getPreTaxAmount()
                     + ", taxed: "
-                    + (transaction.getPreTaxAmount() - transaction.getTaxedAmount())
+                    + (transaction.getPreTaxAmount() - transaction.getAfterTaxAmount())
             );
 
             Account origin = accounts.get(transaction.getOriginAccount().getId());

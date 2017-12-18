@@ -40,7 +40,7 @@ public abstract class Transaction {
     /**
      * @return the value of the transaction after tax.
      */
-    public Double getTaxedAmount() {
+    public Double getAfterTaxAmount() {
         return amount - calculateTax();
     }
 

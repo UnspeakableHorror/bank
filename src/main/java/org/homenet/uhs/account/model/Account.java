@@ -52,11 +52,11 @@ public class Account {
         }
 
         if(this.getId() == destinationId(transaction)){
-            this.addFunds(transaction.getTaxedAmount());
+            this.addFunds(transaction.getAfterTaxAmount());
         }
 
         if(this.getId() == originId(transaction)){
-            this.removeFunds(transaction.getTaxedAmount());
+            this.removeFunds(transaction.getAfterTaxAmount());
         }
 
         this.transactions.add(transaction);
