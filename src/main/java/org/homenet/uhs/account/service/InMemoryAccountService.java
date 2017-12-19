@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import static org.homenet.uhs.account.service.TransactionState.ACCEPTED;
@@ -14,6 +15,7 @@ import static org.homenet.uhs.constants.Banks.*;
 import static org.homenet.uhs.constants.Countries.*;
 
 /**
+ * Account service that runs in memory, useful for testing.
  * @author uh on 2017/12/16.
  */
 public class InMemoryAccountService implements AccountService {
@@ -37,51 +39,53 @@ public class InMemoryAccountService implements AccountService {
 
         if(canBeProcessed(transaction)){
 
-            logger.info("Transferring funds from account: "
-                    + transaction.getOriginAccount().getId()
-                    + " to account: "
-                    + transaction.getDestinationAccount().getId()
-                    + ", amount: "
-                    + transaction.getPreTaxAmount()
-                    + ", taxed: "
-                    + (transaction.getPreTaxAmount() - transaction.getAfterTaxAmount())
-            );
-
-            Account origin = accounts.get(transaction.getOriginAccount().getId());
-            Account destination = accounts.get(transaction.getDestinationAccount().getId());
-
             try {
-                origin.addTransaction(transaction);
-                destination.addTransaction(transaction);
+
+                Account originAccount = transaction.getOriginAccount();
+
+                Account destinationAccount = transaction.getDestinationAccount();
+
+                logger.info("Transferring funds from account: "
+                        + originAccount
+                        + " to account: "
+                        + destinationAccount
+                        + ", amount: "
+                        + transaction.getPreTaxAmount()
+                        + ", taxed: "
+                        + (transaction.getPreTaxAmount() - transaction.getAfterTaxAmount())
+                );
+
+                originAccount.addTransaction(transaction);
+                destinationAccount.addTransaction(transaction);
 
                 fileLogger.info(new TransactionStatus(transaction, ACCEPTED).toString());
 
                 logger.info("Funds transferred.");
-                this.save(origin);
-                this.save(destination);
+                this.save(originAccount);
+                this.save(destinationAccount);
 
             } catch (Exception e){
                 //log and inform
                 logger.severe(e.getMessage());
-
                 fileLogger.info(new TransactionStatus(transaction, REJECTED, e.getMessage()).toString());
             }
         }
     }
 
     @Override
-    public void save(Account destination) {
-        //save the account to the DB
+    public void save(Account account) {
+        // for an in memory operation this is not really needed
+        // since it's the same object but I added it for the sake
+        // of completeness.
+        this.accounts.put(account.getId(), account);
     }
 
-    public Account getAccount(Long accountId){
-        return accounts.get(accountId);
+    public Optional<Account> getAccount(Long accountId){
+        return Optional.ofNullable(accounts.get(accountId));
     }
 
     private boolean canBeProcessed(Transaction transaction) {
-        return accounts.containsKey(transaction.getOriginAccount().getId())
-                && accounts.containsKey(transaction.getDestinationAccount().getId())
-                && transaction.isValid();
+        return transaction.isValid();
     }
 
 }

@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -14,21 +16,29 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class Runners {
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private List<Runner> runners = new ArrayList<>();
 
     private ScheduledExecutorService service = Executors.newScheduledThreadPool(6);
+
+    @Autowired
+    public Runners(RestTemplate restTemplate){
+        runners.add(new Runner(restTemplate));
+        runners.add(new Runner(restTemplate));
+        runners.add(new Runner(restTemplate));
+        runners.add(new Runner(restTemplate));
+    }
 
 
     public void start() {
         service = Executors.newScheduledThreadPool(6);
-        service.scheduleAtFixedRate(()  -> new Runner(restTemplate).run(), 1, 1, TimeUnit.MILLISECONDS);
-        service.scheduleAtFixedRate(()  -> new Runner(restTemplate).run(), 1, 1, TimeUnit.MILLISECONDS);
-        service.scheduleAtFixedRate(()  -> new Runner(restTemplate).run(), 1, 1, TimeUnit.MILLISECONDS);
-        service.scheduleAtFixedRate(()  -> new Runner(restTemplate).run(), 1, 1, TimeUnit.MILLISECONDS);
+
+        runners.forEach( it ->
+                service.scheduleAtFixedRate(it::run, 1, 3, TimeUnit.MILLISECONDS)
+        );
     }
 
     public void stop() {
+        runners.forEach(Runner::stop);
         service.shutdown();
     }
 }

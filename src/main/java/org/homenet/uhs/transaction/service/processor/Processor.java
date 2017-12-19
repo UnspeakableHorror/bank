@@ -1,5 +1,6 @@
 package org.homenet.uhs.transaction.service.processor;
 
+import org.homenet.uhs.account.model.Account;
 import org.homenet.uhs.account.service.AccountService;
 import org.homenet.uhs.transaction.model.Transaction;
 import org.homenet.uhs.transaction.model.TransactionFactory;
@@ -34,9 +35,26 @@ class Processor implements Runnable{
             TransactionDTO transactionDTO = it.getElement();
             logger.info(transactionDTO.toString());
 
+            Optional<Account> origin = accountService.getAccount(transactionDTO.getOriginAccount());
+            Optional<Account> destination = accountService.getAccount(transactionDTO.getDestinationAccount());
+
+            if(!origin.isPresent()){
+                // we can't inform the user directly,
+                // just log it for now.
+                logger.severe("Account with id: " + transactionDTO.getOriginAccount() + " not found.");
+                return;
+            }
+
+            if(!destination.isPresent()){
+                // we can't inform the user directly,
+                // just log it for now.
+                logger.severe("Account with id: " + transactionDTO.getDestinationAccount() + " not found.");
+                return;
+            }
+
             Transaction transaction = TransactionFactory.getTransaction(
-                    accountService.getAccount(transactionDTO.getOriginAccount()),
-                    accountService.getAccount(transactionDTO.getDestinationAccount()),
+                    origin.get(),
+                    destination.get(),
                     transactionDTO.getAmount());
 
             accountService.transferFunds(transaction);

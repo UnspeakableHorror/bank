@@ -20,11 +20,11 @@ public class Runner {
 
     public Runner(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
-        this.active = true;
     }
 
     public void run(){
         logger.info("Starting test...");
+        this.active = true;
 
         while(active) {
             long account1 = new Random().nextInt(6) + 1;
@@ -44,11 +44,11 @@ public class Runner {
                         + " - " + errorException.getResponseBodyAsString());
             }
 
-//            try {
-//                Thread.sleep(1);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
